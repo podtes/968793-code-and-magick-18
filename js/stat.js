@@ -1,11 +1,14 @@
+'use strict';
+
 var CLOUD_WIDTH = 420;
 var CLOUD_HEIGHT = 270;
 var BAR_WIDTH = 40;
 var BAR_HEIGHT = 150;
-var TEXT_X = 140;
-var TEXT_Y = 260;
+var NAME_X = 140;
+var NAME_Y = 260;
 var GAP = 50;
 var FONT_GAP = 20;
+var POINTS_GAP = 10;
 
 
 window.renderStatistics = function (ctx, names, times) {
@@ -17,33 +20,39 @@ window.renderStatistics = function (ctx, names, times) {
 
   ctx.font = '16px PT Mono';
   ctx.fillStyle = '#000000';
-  ctx.fillText('Ура вы победили!', 110, 50);
-  ctx.fillText('Список результатов:', 110, 70);
+  ctx.fillText('Ура вы победили!', 120, 40);
+  ctx.fillText('Список результатов:', 120, 60);
 
+  var maxTime = times[0]; // почему, если объявить переменную внутри функции, то она не будет работать?
 
-//найдем максимальный элемент в массиве times
-
-  var maxTime = times[0];
-
-  for (var i = 0; i < times.length; i++) {
-    console.log(maxTime);
-    if (times[i] > maxTime) {
-      maxTime = times[i];
+  var findMaxTime = function () {
+    for (var i = 0; i < times.length; i++) {
+      if (times[i] > maxTime) {
+        maxTime = times[i];
+      }
     }
-  }
 
-// Нарисуем гистограмму с именами из массива names
+    return maxTime;
+  };
 
-  ctx.fillStyle = '#000000';
+  findMaxTime();
+
+  var showResultPoints = function () {
+    for (var i = 0; i < times.length; i++) {
+      ctx.fillText(Math.round(times[i]), 140 + i * 90, NAME_Y - FONT_GAP - POINTS_GAP - (BAR_HEIGHT * times[i] / maxTime));
+    }
+  };
+
+  showResultPoints();
 
   for (var i = 0; i < names.length; i++) {
     if (names[i] === 'Вы') {
       ctx.fillStyle = 'rgba(255, 0, 0, 1)';
     } else {
-      ctx.fillStyle = '#000000'; //тут будет условие окрашивания столбца в рандомный синий цвет
+      ctx.fillStyle = 'hsl(205, ' + Math.random() * 100 + '%, 70%)';
     }
-    ctx.fillRect(TEXT_X + (BAR_WIDTH + GAP) * i, TEXT_Y - FONT_GAP - BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
-    ctx.fillText(names[i], TEXT_X + (BAR_WIDTH + GAP) * i, TEXT_Y);
-  };
-
+    ctx.fillRect(NAME_X + (BAR_WIDTH + GAP) * i, NAME_Y - FONT_GAP - (BAR_HEIGHT * times[i] / maxTime), BAR_WIDTH, BAR_HEIGHT * times[i] / maxTime);
+    ctx.fillStyle = '#000000';
+    ctx.fillText(names[i], NAME_X + (BAR_WIDTH + GAP) * i, NAME_Y);
+  }
 };
