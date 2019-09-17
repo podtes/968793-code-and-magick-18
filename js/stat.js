@@ -20,6 +20,20 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.fillText('Ура вы победили!', 110, 50);
   ctx.fillText('Список результатов:', 110, 70);
 
+
+//найдем максимальный элемент в массиве times
+
+  var maxTime = times[0];
+
+  for (var i = 0; i < times.length; i++) {
+    console.log(maxTime);
+    if (times[i] > maxTime) {
+      maxTime = times[i];
+    }
+  }
+
+// Нарисуем гистограмму с именами из массива names
+
   ctx.fillStyle = '#000000';
 
   for (var i = 0; i < names.length; i++) {
@@ -27,8 +41,9 @@ window.renderStatistics = function (ctx, names, times) {
       ctx.fillStyle = 'rgba(255, 0, 0, 1)';
     } else {
       ctx.fillStyle = '#000000'; //тут будет условие окрашивания столбца в рандомный синий цвет
-    }; //тут нужно ставить точку с запятой?
+    }
     ctx.fillRect(TEXT_X + (BAR_WIDTH + GAP) * i, TEXT_Y - FONT_GAP - BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT);
     ctx.fillText(names[i], TEXT_X + (BAR_WIDTH + GAP) * i, TEXT_Y);
   };
+
 };
