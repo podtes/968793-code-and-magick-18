@@ -9,7 +9,24 @@ var NAME_Y = 260;
 var GAP = 50;
 var FONT_GAP = 20;
 var POINTS_GAP = 10;
+var maxTime = 0;
+var findMaxTime = function (timesArray) {
+  for (var i = 0; i < timesArray.length; i++) {
+    if (timesArray[i] > maxTime) {
+      maxTime = timesArray[i];
+    }
+  }
 
+  return maxTime;
+};
+var showResultPoints = function (timesArray, canvas) {
+  for (var i = 0; i < timesArray.length; i++) {
+    canvas.fillText(Math.round(timesArray[i]), 140 + i * 90, NAME_Y - FONT_GAP - POINTS_GAP - (BAR_HEIGHT * timesArray[i] / maxTime));
+  }
+};
+var getRandomBlueColor = function (canvas) {
+  canvas.fillStyle = 'hsl(205, ' + Math.random() * 100 + '%, 70%)';
+};
 
 window.renderStatistics = function (ctx, names, times) {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -23,36 +40,30 @@ window.renderStatistics = function (ctx, names, times) {
   ctx.fillText('Ура вы победили!', 120, 40);
   ctx.fillText('Список результатов:', 120, 60);
 
-  var maxTime = times[0]; // почему, если объявить переменную внутри функции, то она не будет работать?
+  maxTime = times[0];
 
-  var findMaxTime = function () {
-    for (var i = 0; i < times.length; i++) {
-      if (times[i] > maxTime) {
-        maxTime = times[i];
-      }
-    }
+  findMaxTime(times);
 
-    return maxTime;
+  showResultPoints(times, ctx);
+
+  var drawGistogram = function () {
+    var GISTOGRAM_X = NAME_X + (BAR_WIDTH + GAP) * i;
+    var GISTOGRAM_Y = NAME_Y - FONT_GAP - (BAR_HEIGHT * times[i] / maxTime);
+    ctx.fillRect(GISTOGRAM_X, GISTOGRAM_Y, BAR_WIDTH, BAR_HEIGHT * times[i] / maxTime);
   };
 
-  findMaxTime();
-
-  var showResultPoints = function () {
-    for (var i = 0; i < times.length; i++) {
-      ctx.fillText(Math.round(times[i]), 140 + i * 90, NAME_Y - FONT_GAP - POINTS_GAP - (BAR_HEIGHT * times[i] / maxTime));
-    }
+  var drawGistogramName = function () {
+    ctx.fillText(names[i], NAME_X + (BAR_WIDTH + GAP) * i, NAME_Y);
   };
-
-  showResultPoints();
 
   for (var i = 0; i < names.length; i++) {
     if (names[i] === 'Вы') {
       ctx.fillStyle = 'rgba(255, 0, 0, 1)';
     } else {
-      ctx.fillStyle = 'hsl(205, ' + Math.random() * 100 + '%, 70%)';
+      getRandomBlueColor(ctx);
     }
-    ctx.fillRect(NAME_X + (BAR_WIDTH + GAP) * i, NAME_Y - FONT_GAP - (BAR_HEIGHT * times[i] / maxTime), BAR_WIDTH, BAR_HEIGHT * times[i] / maxTime);
+    drawGistogram();
     ctx.fillStyle = '#000000';
-    ctx.fillText(names[i], NAME_X + (BAR_WIDTH + GAP) * i, NAME_Y);
+    drawGistogramName();
   }
 };
