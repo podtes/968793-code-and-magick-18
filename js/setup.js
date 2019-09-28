@@ -27,7 +27,7 @@ var createWizardsArray = function (countWizards) {
       name: WIZARD_NAMES[getRandomValue(WIZARD_NAMES)] + ' ' + WIZARD_LASTNAMES[getRandomValue(WIZARD_LASTNAMES)],
       coatColor: COAT_COLORS[getRandomValue(COAT_COLORS)],
       eyesColor: EYES_COLORS[getRandomValue(EYES_COLORS)]
-    }
+    };
   }
 
   return wizards;
