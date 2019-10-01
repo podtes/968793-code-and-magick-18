@@ -26,9 +26,17 @@ var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 var FIREBALLS_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
 
 /**
+ * @typedef {{
+ * name: string,
+ * coatColor: string,
+ * eyesColor: string
+}} wizard
+ */
+
+/**
  * Функция возвращает случайный элемент из массива
  * @param {*[]} arrayName массив, из которого будет выбирать элемент
- * @return {*} случайный элемент массива
+ * @return {object} randomValue случайный элемент массива
  */
 var getRandomValue = function (arrayName) {
   var randomValue = Math.floor(Math.random() * arrayName.length);
@@ -38,11 +46,7 @@ var getRandomValue = function (arrayName) {
 /**
  * Функция вернет массив со сгенерированными волшебниками
  * @param {number} countWizards число необходимых волшебников
- * @return {[{
- *  name: string,
- *  coatColor: string,
- *  eyesColor: string
- * }]}
+ * @return {wizards[]} wizards массив волшебников
  */
 var createWizardsArray = function (countWizards) {
   for (var i = 0; i < countWizards; i++) {
@@ -58,7 +62,7 @@ var createWizardsArray = function (countWizards) {
 
 /**
  * Функция генерирует DOM элемент на основе шаблона similarWizardTemplate
- * @param {*{}} wizard объект с исходными данными для генерации волшебника
+ * @param {wizard} wizard объект с исходными данными для генерации волшебника
  * @return {Node} сгенерированный DOM элемент
  */
 var renderWizard = function (wizard) {
@@ -87,7 +91,7 @@ var putWizardsToPage = function () {
 var popupOpenHandler = function () {
   setup.classList.remove('hidden');
 
-  document.addEventListener('keydown', function(evt) {
+  document.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
       setup.classList.add('hidden');
     }
@@ -99,7 +103,7 @@ var popupOpenHandler = function () {
  */
 var popupCloseHandler = function () {
   setup.classList.add('hidden');
-}
+};
 
 createWizardsArray(4);
 
@@ -116,14 +120,14 @@ setupCloseButton.addEventListener('click', function () {
   popupCloseHandler();
 });
 
-setupOpenButton.addEventListener('keydown', function(evt) {
+setupOpenButton.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
     popupOpenHandler();
   }
 });
 
 setupCloseButton.addEventListener('keydown', function (evt) {
-  if(evt.keyCode === ENTER_KEYCODE) {
+  if (evt.keyCode === ENTER_KEYCODE) {
     popupCloseHandler();
   }
 });
@@ -131,16 +135,16 @@ setupCloseButton.addEventListener('keydown', function (evt) {
 /**
  * Обработчик стилизует подсказки пользователю при невалидном значении userNameInput
  */
-userNameInput.addEventListener('invalid', function (evt) {
+userNameInput.addEventListener('invalid', function () {
   if (userNameInput.validity.tooShort) {
-    userNameInput.setCustomValidity('У нас имя волшебника состоит как минимум из 2 букв!')
+    userNameInput.setCustomValidity('У нас имя волшебника состоит как минимум из 2 букв!');
   } else if (userNameInput.validity.tooLong) {
-    userNameInput.setCustomValidity('В форме есть место всего под 25 символов, давай короче.')
+    userNameInput.setCustomValidity('В форме есть место всего под 25 символов, давай короче.');
   } else if (userNameInput.validity.valueMissing) {
-    userNameInput.setCustomValidity('Нужно дать волшебнику имя!')
+    userNameInput.setCustomValidity('Нужно дать волшебнику имя!');
   } else {
-    userNameInput.setCustomValidity('')
-  };
+    userNameInput.setCustomValidity('');
+  }
 });
 
 setupSimilar.classList.remove('hidden');
@@ -179,3 +183,4 @@ wizardFireball.addEventListener('click', function () {
   wizardFireballInput.value = wizardFireball.style.background;
   console.log(wizardFireballInput.value); // сервер не принимает rgb, как сделать так, чтобы отправлялось #******?
 });
+
