@@ -30,12 +30,12 @@ var FIREBALLS_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
  * name: string,
  * coatColor: string,
  * eyesColor: string
-}} wizard
+}} Wizard
  */
 
 /**
  * Функция возвращает случайный элемент из массива
- * @param {*[]} arrayName массив, из которого будет выбирать элемент
+ * @param {*[]} arrayName массив, из которого будем выбирать элемент
  * @return {object} randomValue случайный элемент массива
  */
 var getRandomValue = function (arrayName) {
@@ -44,9 +44,9 @@ var getRandomValue = function (arrayName) {
 };
 
 /**
- * Функция вернет массив со сгенерированными волшебниками
+ * Функция создает массив с объектами, описывающими параметры волшебников
  * @param {number} countWizards число необходимых волшебников
- * @return {wizards[]} wizards массив волшебников
+ * @return {[]} wizards массив c объектами, каждый из которых описывает одного волшебника
  */
 var createWizardsArray = function (countWizards) {
   for (var i = 0; i < countWizards; i++) {
@@ -56,16 +56,15 @@ var createWizardsArray = function (countWizards) {
       eyesColor: EYES_COLORS[getRandomValue(EYES_COLORS)]
     };
   }
-
   return wizards;
 };
 
 /**
- * Функция генерирует DOM элемент на основе шаблона similarWizardTemplate
- * @param {wizard} wizard объект с исходными данными для генерации волшебника
- * @return {Node} сгенерированный DOM элемент
+ * Функция генерирует DOM элемент, который описывает волшебника на основе шаблона similarWizardTemplate
+ * @param {Wizard} wizard объект с исходными данными для генерации волшебника
+ * @return {Node} wizardElement сгенерированный DOM элемент
  */
-var renderWizard = function (wizard) {
+var generateWizard = function (wizard) {
   var wizardElement = similarWizardTemplate.cloneNode(true);
   wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
   wizardElement.querySelector('.wizard-coat').style.fill = wizard.coatColor;
@@ -74,67 +73,56 @@ var renderWizard = function (wizard) {
   return wizardElement;
 };
 
-/**
- * Функция переносит сгенерированные DOM элементы на страницу index.html и вставляет в контейнер setup-similar-list
- */
 var putWizardsToPage = function () {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < wizards.length; i++) {
-    fragment.appendChild(renderWizard(wizards[i]));
+    fragment.appendChild(generateWizard(wizards[i]));
   }
   similarListElement.appendChild(fragment);
 };
 
-/**
- * Функция показывает попап setup
- */
-var popupOpenHandler = function () {
-  setup.classList.remove('hidden');
-
-  document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      setup.classList.add('hidden');
-    }
-  });
+var onOpenPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    setup.classList.add('hidden');
+  }
 };
 
-/**
- * Функция скрывает попап setup
- */
-var popupCloseHandler = function () {
+var popupOpen = function () {
+  setup.classList.remove('hidden');
+  document.addEventListener('keydown', onOpenPopupEscPress);
+};
+
+var popupClose = function () {
   setup.classList.add('hidden');
+  document.removeEventListener('keydown', onOpenPopupEscPress);
 };
 
 createWizardsArray(4);
 
 putWizardsToPage();
 
-/**
- * обработчики описываются в jsdoc?
- */
+setupSimilar.classList.remove('hidden');
+
 setupOpenButton.addEventListener('click', function () {
-  popupOpenHandler();
+  popupOpen();
 });
 
 setupCloseButton.addEventListener('click', function () {
-  popupCloseHandler();
+  popupClose();
 });
 
 setupOpenButton.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
-    popupOpenHandler();
+    popupOpen();
   }
 });
 
 setupCloseButton.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
-    popupCloseHandler();
+    popupClose();
   }
 });
 
-/**
- * Обработчик стилизует подсказки пользователю при невалидном значении userNameInput
- */
 userNameInput.addEventListener('invalid', function () {
   if (userNameInput.validity.tooShort) {
     userNameInput.setCustomValidity('У нас имя волшебника состоит как минимум из 2 букв!');
@@ -147,24 +135,6 @@ userNameInput.addEventListener('invalid', function () {
   }
 });
 
-setupSimilar.classList.remove('hidden');
-
-// var wizardElementClickHandler = function (wizardElement, elementColorsArr, elementProperty, elementInput) {
-//   wizardElement.addEventListener('click', function () {
-//     elementProperty = elementColorsArr[getRandomValue(elementColorsArr)];
-//     elementInput.value = elementProperty;
-//   });
-// };
-//
-// wizardElementClickHandler(wizardCoat, COAT_COLORS, wizardCoat.style.fill, wizardCoatInput);
-// wizardElementClickHandler(wizardEyes, EYES_COLORS, wizardEyes.style.fill, wizardEyesInput);
-// wizardElementClickHandler(wizardFireball, FIREBALLS_COLORS, wizardFireball.style.background, wizardFireballInput);
-
-// почему не работает такая запись? Можно вообще это как то описать одной функцией для всех трех случаев?
-
-/**
- * Нужно описать что делает обработчик в комментарии?
- */
 wizardCoat.addEventListener('click', function () {
   wizardCoat.style.fill = COAT_COLORS[getRandomValue(COAT_COLORS)];
   wizardCoatInput.value = wizardCoat.style.fill;
@@ -175,12 +145,10 @@ wizardEyes.addEventListener('click', function () {
   wizardEyesInput.value = wizardEyes.style.fill;
 });
 
-console.log(FIREBALLS_COLORS[getRandomValue(FIREBALLS_COLORS)]); // тут показывает правильный формат цвета #******
 
 wizardFireball.addEventListener('click', function () {
-  wizardFireball.style.background = FIREBALLS_COLORS[getRandomValue(FIREBALLS_COLORS)];
-  console.log(wizardFireball.style.background); // а вот тут уже rgb?
-  wizardFireballInput.value = wizardFireball.style.background;
-  console.log(wizardFireballInput.value); // сервер не принимает rgb, как сделать так, чтобы отправлялось #******?
+  var fireballRandomColor = FIREBALLS_COLORS[getRandomValue(FIREBALLS_COLORS)];
+  wizardFireball.style.background = fireballRandomColor;
+  wizardFireballInput.value = fireballRandomColor;
 });
 
